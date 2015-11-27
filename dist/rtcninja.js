@@ -27,6 +27,7 @@ var browser = require('bowser'),
 	MediaStreamTrack = null,
 	getMediaDevices = null,
 	attachMediaStream = null,
+    mediaDevices = null,
 	canRenegotiate = false,
 	oldSpecRTCOfferOptions = false,
 	browserVersion = Number(browser.version) || 0,
@@ -70,6 +71,9 @@ function Adapter(options) {
 			element.src = URL.createObjectURL(stream);
 			return element;
 		};
+		if (virtNavigator.mediaDevices) {
+			mediaDevices = virtNavigator.mediaDevices;
+		}
 		canRenegotiate = true;
 		oldSpecRTCOfferOptions = false;
 	// Firefox desktop, Firefox Android.
@@ -88,6 +92,9 @@ function Adapter(options) {
 			element.src = URL.createObjectURL(stream);
 			return element;
 		};
+		if (virtNavigator.mediaDevices) {
+			mediaDevices = virtNavigator.mediaDevices;
+		}
 		canRenegotiate = false;
 		oldSpecRTCOfferOptions = false;
 		// WebRTC plugin required. For example IE or Safari with the Temasys plugin.
@@ -205,6 +212,9 @@ function Adapter(options) {
 
 	// Expose getMediaDevices.
 	Adapter.getMediaDevices = getMediaDevices;
+
+	// Expose mediaDevices.
+	Adapter.mediaDevices = mediaDevices || throwNonSupported('mediaDevices');
 
 	// Expose MediaStreamTrack.
 	Adapter.attachMediaStream = attachMediaStream || throwNonSupported('attachMediaStream');
@@ -1103,6 +1113,7 @@ function rtcninja(options) {
 	rtcninja.MediaStreamTrack = iface.MediaStreamTrack;
 	rtcninja.getMediaDevices = iface.getMediaDevices;
 	rtcninja.attachMediaStream = iface.attachMediaStream;
+	rtcninja.mediaDevices = iface.mediaDevices;
 	rtcninja.closeMediaStream = iface.closeMediaStream;
 	rtcninja.canRenegotiate = iface.canRenegotiate;
 
